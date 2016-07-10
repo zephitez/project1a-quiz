@@ -1,0 +1,53 @@
+/* Shared
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button {
+  border-radius: 100px;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+h3 {
+  text-align: left;
+}
+
+.section {
+  padding: 4rem 0 4rem;
+  margin-bottom: 10rem;
+  text-align: center;
+  background-color: #C53423;
+}
+
+/* CSS
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.answer {
+  padding: 10px;
+  background-color: #004166;
+  text-align: center;
+  color: #FAFAFA;
+}
+
+.top-block {
+  margin-bottom: 5rem;
+}
+.question-number {
+  font-weight: bold;
+}
+
+.player-score {
+  font-weight: bold;
+}
+
+.start-quiz {
+  font-size: 22px;
+  color: #FAFAFA;
+  border-color: #FAFAFA;
+  height: 60px;
+  padding: 0 30px;
+  line-height: 60px;
+}
+
+.container {
+  margin-top: -5rem;
+}
