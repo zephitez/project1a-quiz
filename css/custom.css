@@ -31,8 +31,13 @@ h3 {
 .top-block {
   margin-bottom: 5rem;
 }
-.question-number {
-  font-weight: bold;
+.question-header {
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+#question-header {
+    font-weight: bold;
 }
 
 .player-score {
@@ -50,4 +55,13 @@ h3 {
 
 .container {
   margin-top: -5rem;
+}
+
+.question-box {
+  display: none;
+}
+
+#remarks {
+  font-weight: bold;
+  color: red;
 }
