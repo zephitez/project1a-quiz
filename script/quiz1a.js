@@ -2,34 +2,34 @@ $(document).ready(function() {
 
   var listQns = [{
     qns: 'Shiok means very awesome.',
-    correctAns: 1
+    correctAns: 'true'
   }, {
     qns: 'Wa Lau Eh means you are stupid.',
-    correctAns: 0
+    correctAns: 'false'
   }, {
     qns: 'I don\'t know sia means I don\'t know prawns.',
-    correctAns: 0
+    correctAns: 'false'
   }, {
     qns: 'You know hor means you know who is Hor.',
-    correctAns: 0
+    correctAns: 'false'
   }, {
     qns: 'Rojak is a food.',
-    correctAns: 1
+    correctAns: 'true'
   }, {
     qns: 'I lub you means I love you.',
-    correctAns: 1
+    correctAns: 'true'
   }, {
     qns: 'How ah.. means what should we do?',
-    correctAns: 1
+    correctAns: 'true'
   }, {
     qns: 'Siam Lah means \"Excuse me, could you please make way?\"',
-    correctAns: 1
+    correctAns: 'true'
   }, {
     qns: 'Bojio means to complain whenever someone did something with you.',
-    correctAns: 0
+    correctAns: 'false'
   }, {
     qns: 'Blur like sotong means as mysterious as a squid.',
-    correctAns: 0
+    correctAns: 'false'
   }];
 
   function Game(question) {
@@ -44,16 +44,15 @@ $(document).ready(function() {
     this.player2Score = 0;
     this.turn = 1;
     this.index = 0;
-    this.$messageBox = $('#messageBox');
+    this.currentQns = 1;
+    this.$messageBox = $('#message-box');
     this.$questionHeader = $('#question-header');
     this.$playerTurn = $('#player-turn');
-    this.$clickTrue = $('#true');
-    this.$clickFalse = $('#false');
-    this.$clickStart = $('.start-quiz');
-    this.currentQns = 1;
+    this.$clickStart = $('#start-quiz');
+    this.$clickRestart = $('#restart-quiz');
     this.$unhideQuestionBox = $('.question-box');
     this.$remarks = $('#remarks');
-
+    this.$clickAnswer = $('.answer');
   }
 
   Game.prototype = {
@@ -65,16 +64,43 @@ $(document).ready(function() {
 
     setUpGame: function() {
       this.$clickStart.click(this.selectAnswer.bind(this));
+      this.$clickRestart.click(this.restart.bind(this));
       this.numberOfQuestions();
     },
 
     selectAnswer: function() {
+      console.log(this.index);
+      console.log(this.currentQns);
+      this.$clickStart.hide();
       this.$unhideQuestionBox.show();
-      this.$clickTrue.click(this.playTurn.bind(this));
-      this.$clickFalse.click(this.playTurn.bind(this));
+      this.$clickAnswer.bind('click', {context: this}, this.checkId);
     },
 
-    playTurn: function() {
+    checkId: function(ev) {
+      //check the answer if true or false
+      var result = this.id;
+      var self = ev.data.context;
+      self.runPlayTurn(result);
+    },
+
+    runPlayTurn: function(trueFalseId) {
+      this.playTurn(trueFalseId);
+    },
+
+    playTurn: function(trueFalseId) {
+      console.log(this.index);
+      console.log(this.currentQns);
+      //checkturn and updateScore
+      if (this.turn == 1) {
+        this.updateScore(this.index, trueFalseId);
+        this.setMsg(this.$playerTurn, this.player2 + '\'s turn');
+        this.turn = 2;
+      } else if (this.turn == 2) {
+        this.updateScore(this.index, trueFalseId);
+        this.setMsg(this.$playerTurn, this.player1 + '\'s turn');
+        this.turn = 1;
+      }
+
       //output question
       this.index++;
       this.setMsg(this.$messageBox, this.question[this.index].qns);
@@ -82,45 +108,36 @@ $(document).ready(function() {
       //increase current question number
       this.currentQns++;
       this.setMsg(this.$questionHeader, 'Question ' + this.currentQns);
+    },
 
-      //checkturn and updateScore
-      if (this.gameover()) {
-        this.whoWon();
-      } else {
-      if (this.turn == 1) {
-        this.updateScore(this.index);
-        this.setMsg(this.$playerTurn, this.player2 + '\'s turn');
-        this.turn = 2;
-      } else if (this.turn == 2) {
-        this.updateScore(this.index);
-        this.setMsg(this.$playerTurn, this.player1 + '\'s turn');
-        this.turn = 1;
+    updateScore: function(x, trueFalseId) {
+
+      switch (this.turn) {
+        case 1:
+          if (trueFalseId == this.question[x].correctAns) {
+            this.player1Score++;
+            this.setMsg(this.$player1, this.player1Score);
+            this.setMsg(this.$remarks, this.rightAnsMsg);
+          } else {
+            this.setMsg(this.$remarks, this.wrongAnsMsg);
+          }
+          break;
+        case 2:
+          if (trueFalseId == this.question[x].correctAns) {
+            this.player2Score++;
+            this.setMsg(this.$player2, this.player2Score);
+            this.setMsg(this.$remarks, this.rightAnsMsg);
+          } else {
+            this.setMsg(this.$remarks, this.wrongAnsMsg);
+          }
+          break;
       }
-    }
+
+      if (this.isGameOver()) {
+        this.whoWon();
+      }
     },
-
-    updateScore: function(x) {
-
-        if (this.$clickTrue == this.question[x].correctAns) {
-          if (this.turn == 1) {
-            this.player1Score++;
-            console.log(this.$player1);
-            this.setMsg(this.$player1, this.player1Score);
-          } else if (this.turn == 2) {
-            this.player2Score++;
-            this.setMsg(this.$player2, this.player2Score);
-          }
-        } else if (this.$clickFalse == this.question[x].correctAns) {
-          if (this.turn == 1) {
-            this.player1Score++;
-            this.setMsg(this.$player1, this.player1Score);
-          } else if (this.turn == 2) {
-            this.player2Score++;
-            this.setMsg(this.$player2, this.player2Score);
-          }
-        }
-    },
-
+    //set Message
     setMsg: function(destination, message) {
       destination.text(message);
     },
@@ -129,17 +146,21 @@ $(document).ready(function() {
     whoWon: function() {
       if (this.player1Score > this.player2Score) {
         this.setMsg(this.$remarks, "Player 1 Wins Lor!");
+        this.$playerTurn.hide();
+
       } else if (this.player1Score < this.player2Score) {
         this.setMsg(this.$remarks, "Player 2 Wins Lor!");
+        this.$playerTurn.hide();
       } else {
         this.setMsg(this.$remarks, "It\'s a Draw Lah!");
+        this.$playerTurn.hide();
       }
+
     },
 
     //check if gameover and check winner
     isGameOver: function() {
       if (this.currentQns == this.numberOfQuestions()) {
-        this.turn = 3;
         return true;
       }
     },
@@ -147,6 +168,17 @@ $(document).ready(function() {
     restart: function() {
       this.player1Score = 0;
       this.player2Score = 0;
+      this.currentQns = 1;
+      this.index = 0;
+      this.turn = 1;
+      this.setMsg(this.$remarks, 'Remarks!');
+      this.setMsg(this.$player1, 0);
+      this.setMsg(this.$player2, 0);
+      this.setMsg(this.$messageBox, this.question[0].qns);
+      this.$playerTurn.show();
+      this.$unhideQuestionBox.hide();
+      this.setMsg(this.$questionHeader, 'Question 1');
+      this.$clickStart.show();
     }
   };
 

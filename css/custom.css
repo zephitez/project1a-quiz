@@ -44,13 +44,14 @@ h3 {
   font-weight: bold;
 }
 
-.start-quiz {
+.quiz {
   font-size: 22px;
   color: #FAFAFA;
   border-color: #FAFAFA;
   height: 60px;
   padding: 0 30px;
   line-height: 60px;
+  margin-right: 2rem;
 }
 
 .container {
@@ -64,4 +65,8 @@ h3 {
 #remarks {
   font-weight: bold;
   color: red;
+}
+
+#message-box {
+  height: 8rem;
 }
