@@ -38,9 +38,12 @@ $(document).ready(function() {
     this.wrongAnsMsg = 'Wrong Lah!';
     this.player1 = 'Player 1';
     this.player2 = 'Player 2';
+    this.$player1 = $('#player1');
+    this.$player2 = $('#player2');
     this.player1Score = 0;
     this.player2Score = 0;
     this.turn = 1;
+    this.index = 0;
     this.$messageBox = $('#messageBox');
     this.$questionHeader = $('#question-header');
     this.$playerTurn = $('#player-turn');
@@ -49,6 +52,8 @@ $(document).ready(function() {
     this.$clickStart = $('.start-quiz');
     this.currentQns = 1;
     this.$unhideQuestionBox = $('.question-box');
+    this.$remarks = $('#remarks');
+
   }
 
   Game.prototype = {
@@ -70,44 +75,71 @@ $(document).ready(function() {
     },
 
     playTurn: function() {
-      // this.setMsg(this.question[0].qns);
+      //output question
+      this.index++;
+      this.setMsg(this.$messageBox, this.question[this.index].qns);
+
+      //increase current question number
       this.currentQns++;
       this.setMsg(this.$questionHeader, 'Question ' + this.currentQns);
 
+      //checkturn and updateScore
+      if (this.gameover()) {
+        this.whoWon();
+      } else {
       if (this.turn == 1) {
+        this.updateScore(this.index);
         this.setMsg(this.$playerTurn, this.player2 + '\'s turn');
         this.turn = 2;
       } else if (this.turn == 2) {
+        this.updateScore(this.index);
         this.setMsg(this.$playerTurn, this.player1 + '\'s turn');
         this.turn = 1;
       }
-      game1.isGameOver();
+    }
     },
 
-    checkAnswer: function() {
+    updateScore: function(x) {
 
-      return true;
+        if (this.$clickTrue == this.question[x].correctAns) {
+          if (this.turn == 1) {
+            this.player1Score++;
+            console.log(this.$player1);
+            this.setMsg(this.$player1, this.player1Score);
+          } else if (this.turn == 2) {
+            this.player2Score++;
+            this.setMsg(this.$player2, this.player2Score);
+          }
+        } else if (this.$clickFalse == this.question[x].correctAns) {
+          if (this.turn == 1) {
+            this.player1Score++;
+            this.setMsg(this.$player1, this.player1Score);
+          } else if (this.turn == 2) {
+            this.player2Score++;
+            this.setMsg(this.$player2, this.player2Score);
+          }
+        }
     },
-
-    updateScore: function() {
-      // if (this.turn == 1) {
-      //   if ()
-      //   this.player1Score
-      // };
-      //
-    },
-
 
     setMsg: function(destination, message) {
       destination.text(message);
     },
 
+    // check winner
     whoWon: function() {
-
+      if (this.player1Score > this.player2Score) {
+        this.setMsg(this.$remarks, "Player 1 Wins Lor!");
+      } else if (this.player1Score < this.player2Score) {
+        this.setMsg(this.$remarks, "Player 2 Wins Lor!");
+      } else {
+        this.setMsg(this.$remarks, "It\'s a Draw Lah!");
+      }
     },
 
+    //check if gameover and check winner
     isGameOver: function() {
       if (this.currentQns == this.numberOfQuestions()) {
+        this.turn = 3;
         return true;
       }
     },
@@ -120,9 +152,6 @@ $(document).ready(function() {
 
   var game1 = new Game(listQns);
   game1.setUpGame();
-
-
-
 
   // document ready ends here
 });
