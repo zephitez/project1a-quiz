@@ -63,20 +63,23 @@ $(document).ready(function() {
     },
 
     setUpGame: function() {
-      this.$clickStart.click(this.selectAnswer.bind(this));
+      // this one adds an event listener to the click start button -> when it is clicked, it shows all the questions
+      this.$clickStart.click(this.showAnswer.bind(this));
+      // adding click event listener to all answers -> when answers are click it runs selectAnswer
+      this.$clickAnswer.bind('click', {context: this}, this.selectAnswer);
+      // adding ... and it calls the restart function 
       this.$clickRestart.click(this.restart.bind(this));
       this.numberOfQuestions();
     },
 
-    selectAnswer: function() {
+    showAnswer: function() {
       console.log(this.index);
       console.log(this.currentQns);
       this.$clickStart.hide();
       this.$unhideQuestionBox.show();
-      this.$clickAnswer.bind('click', {context: this}, this.checkId);
     },
 
-    checkId: function(ev) {
+    selectAnswer: function(ev) {
       //check the answer if true or false
       var result = this.id;
       var self = ev.data.context;
