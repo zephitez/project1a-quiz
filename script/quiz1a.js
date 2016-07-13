@@ -65,8 +65,8 @@ $(document).ready(function() {
     setUpGame: function() {
       // this one adds an event listener to the click start button -> when it is clicked, it shows all the questions
       this.$clickStart.click(this.showAnswer.bind(this));
-      // adding click event listener to all answers -> when answers are click it runs selectAnswer and binds it to this
-      this.$clickAnswer.click($.proxy(this.selectAnswer, this));
+      // adding click event listener to all answers -> when answers are click it runs playTurn and binds it to this
+      this.$clickAnswer.click(this.playTurn.bind(this));
       // adding ... and it calls the restart function
       this.$clickRestart.click(this.restart.bind(this));
       this.numberOfQuestions();
@@ -77,20 +77,14 @@ $(document).ready(function() {
       this.$unhideQuestionBox.show();
     },
 
-    selectAnswer: function(ev) {
-      //check the answer if true or false
-      var result = ev.target.id;
-      this.playTurn(result);
-    },
-
-    playTurn: function(trueFalseId) {
+    playTurn: function(event) {
       //checkturn and updateScore
       if (this.turn == 1) {
-        this.updateScore(this.index, trueFalseId);
+        this.updateScore(this.index, event.target.id);
         this.setMsg(this.$playerTurn, this.player2 + '\'s turn');
         this.turn = 2;
       } else if (this.turn == 2) {
-        this.updateScore(this.index, trueFalseId);
+        this.updateScore(this.index, event.target.id);
         this.setMsg(this.$playerTurn, this.player1 + '\'s turn');
         this.turn = 1;
       }
