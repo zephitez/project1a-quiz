@@ -32,6 +32,20 @@ $(document).ready(function() {
     correctAns: 'false'
   }];
 
+  Array.prototype.shuffle = function() {
+      var input = this;
+
+      for (var i = input.length-1; i >=0; i--) {
+
+          var randomIndex = Math.floor(Math.random()*(i+1));
+          var itemAtIndex = input[randomIndex];
+
+          input[randomIndex] = input[i];
+          input[i] = itemAtIndex;
+      }
+      return input;
+  };
+
   function Game(question) {
     this.question = question;
     this.rightAnsMsg = 'Steady lar!';
@@ -53,6 +67,8 @@ $(document).ready(function() {
     this.$unhideQuestionBox = $('.question-box');
     this.$remarks = $('#remarks');
     this.$clickAnswer = $('.answer');
+    this.splicedArr = [];
+    this.randomPosition = 0;
   }
 
   Game.prototype = {
@@ -64,17 +80,19 @@ $(document).ready(function() {
 
     setUpGame: function() {
       // this one adds an event listener to the click start button -> when it is clicked, it shows all the questions
-      this.$clickStart.click(this.showAnswer.bind(this));
-      // adding click event listener to all answers -> when answers are click it runs playTurn and binds it to this
-      this.$clickAnswer.click(this.playTurn.bind(this));
+      this.$clickStart.click(this.initGame.bind(this));
       // adding ... and it calls the restart function
       this.$clickRestart.click(this.restart.bind(this));
       this.numberOfQuestions();
     },
 
-    showAnswer: function() {
+    //show questions, hide start and generate random
+    initGame: function() {
       this.$clickStart.hide();
       this.$unhideQuestionBox.show();
+      this.question.shuffle();
+      // adding click event listener to all answers -> when answers are click it runs playTurn and binds it to this
+      this.$clickAnswer.click(this.playTurn.bind(this));
     },
 
     playTurn: function(event) {
@@ -101,6 +119,7 @@ $(document).ready(function() {
     updateScore: function(x, trueFalseId) {
 
       switch (this.turn) {
+        //if its player 1
         case 1:
           if (trueFalseId == this.question[x].correctAns) {
             this.player1Score++;
@@ -110,6 +129,7 @@ $(document).ready(function() {
             this.setMsg(this.$remarks, this.wrongAnsMsg);
           }
           break;
+        //if its player 2
         case 2:
           if (trueFalseId == this.question[x].correctAns) {
             this.player2Score++;
@@ -173,5 +193,7 @@ $(document).ready(function() {
   var game1 = new Game(listQns);
   game1.setUpGame();
 
+  var game2 = new Game(listQns);
+  game2.setUpGame();
   // document ready ends here
 });
