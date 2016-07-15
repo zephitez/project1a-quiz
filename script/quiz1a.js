@@ -67,7 +67,6 @@ $(document).ready(function() {
     this.$unhideQuestionBox = $('.question-box');
     this.$remarks = $('#remarks');
     this.$clickAnswer = $('.answer');
-    this.splicedArr = [];
     this.randomPosition = 0;
   }
 
